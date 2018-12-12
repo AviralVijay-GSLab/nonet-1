@@ -1,0 +1,79 @@
+```{r}
+library(caret)
+library(ggplot2)
+library(ClusterR)
+```
+
+```{r}
+set.seed(1001)
+```
+
+
+```{r}
+dataframe <- data.frame(banknote_authentication)
+```
+
+```{r}
+dataframe$class <- as.factor(dataframe$class)
+```
+
+
+```{r}
+#Spliting training set into two parts based on outcome: 75% and 25%
+index <- createDataPartition(dataframe$class, p=0.75, list=FALSE)
+trainSet <- dataframe[ index,]
+testSet <- dataframe[-index,]
+```
+
+```{r}
+dim(trainSet); dim(testSet)
+```
+
+```{r}
+str(trainSet)
+```
+
+```{r}
+str(testSet)
+```
+
+```{r}
+#Feature selection using rfe in caret
+control <- rfeControl(functions = rfFuncs,
+                   method = "repeatedcv",
+                   repeats = 3,
+                   verbose = FALSE)
+```
+
+```{r}
+outcomeName<-'class'
+predictors<-c("variance", "skewness", "curtosis", "entropy")
+```
+
+```{r}
+trainSet[,predictors]
+```
+```{r}
+trainSet[,outcomeName]
+```
+
+```{r}
+set.seed(30)
+#kMeans_train <- kmeans(trainSet[,predictors], centers=2)
+gmm <- GMM(trainSet[,predictors], 2, dist_mode = "maha_dist", seed_mode = "random_subset", km_iter = 10, em_iter = 10, verbose = F)          
+
+```
+
+```{r}
+pr <- predict_GMM(trainSet[,predictors], gmm$centroids, gmm$covariance_matrices, gmm$weights) 
+head(pr$cluster_proba[, 1])
+```
+
+```{r}
+pr_clus <- as.factor(ifelse(pr$cluster_proba[, 1] >= "0.5", "0", "1"))
+head(pr_clus)
+```
+```{r}
+head(pr$cluster_labels)
+```
+

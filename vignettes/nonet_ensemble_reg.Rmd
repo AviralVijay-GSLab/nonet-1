@@ -1,0 +1,119 @@
+```{r}
+#trainSet <- na.omit(banknote_authentication)[1:1030, ]
+#testSet <- na.omit(banknote_authentication)[1031:1372, ]
+```
+```{r}
+dataframe <- data.frame(banknote_authentication)
+head(dataframe)
+```
+
+```{r}
+dataframe <- data.frame(dataframe)
+head(dataframe)
+```
+
+```{r}
+index <- createDataPartition(dataframe$class, p=0.75, list=FALSE)
+trainSet <- dataframe[ index,]
+testSet <- dataframe[-index,]
+```
+
+
+
+```{r}
+#Feature selection using rfe in caret
+control <- rfeControl(functions = rfFuncs,
+  method = "repeatedcv",
+  repeats = 3,
+  verbose = FALSE)
+
+```
+
+```{r}
+outcomeName <- 'class'
+predictors <- c("variance", "skewness", "curtosis", "entropy")
+```
+
+
+```{r}
+banknote_rf <- train(trainSet[,predictors],trainSet[,outcomeName],method='rf')
+banknote_glm <- train(trainSet[,predictors],trainSet[,outcomeName],method='glm')
+banknote_nnet <- train(trainSet[,predictors],trainSet[,outcomeName],method='nnet')
+```
+
+
+```{r}
+
+predictions_rf <- predict.train(object=banknote_rf,testSet[,predictors],type="prob")
+predictions_glm <- predict.train(object=banknote_glm,testSet[,predictors],type="prob")
+predictions_nnet <- predict.train(object=banknote_nnet,testSet[,predictors],type="prob")
+```
+
+
+```{r}
+predictions_rf_raw <- predict.train(object=banknote_rf,testSet[,predictors],type="raw")
+predictions_glm_raw <-  predict.train(object=banknote_glm,testSet[,predictors],type="raw")
+predictions_nnet_raw <- predict.train(object=banknote_nnet,testSet[,predictors],type="raw")
+```
+
+```{r}
+Stack_object <- list(predictions_rf$Yes, predictions_glm$Yes, predictions_nnet$Yes)
+```
+```{r}
+a <- lapply(Stack_object, is.numeric)
+a
+```
+```{r}
+ Equal_check <- function(x) {
+    if (x == FALSE) {
+      return(FALSE)
+    }
+  }
+```
+
+
+
+```{r}
+b <- lapply(a, isTRUE)
+b
+```
+
+
+```{r}
+names(Stack_object) <- c("model_rf", "model_glm", "model_nnet")
+```
+
+
+```{r}
+prediction_nonet_raw <- nonet_ensemble(Stack_object, "model_nnet")
+```
+```{r}
+prediction_nonet_raw
+```
+
+```{r}
+
+prediction_nonet <- as.factor(ifelse(prediction_nonet_raw >= "0.5", "Yes", "No"))
+```
+```{r}
+prediction_nonet
+```
+
+
+
+```{r}
+confusionMatrix(prediction_nonet, testSet[,outcomeName])
+```
+
+```{r}
+confusionMatrix(predictions_glm_raw,testSet[,outcomeName])
+```
+
+```{r}
+confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
+```
+
+```{r}
+confusionMatrix(predictions_nnet_raw,testSet[,outcomeName])
+```
+

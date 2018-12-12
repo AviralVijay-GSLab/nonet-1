@@ -1,0 +1,205 @@
+---
+title: "Untitled"
+author: "Aviral Vijay"
+date: "10 December 2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r}
+library(nonet)
+library(caret)
+library(datasets)
+```
+
+```{r}
+data()
+```
+```{r}
+LifeCycleSavings <- data.frame(LifeCycleSavings)
+```
+
+```{r}
+Puromycin
+```
+
+
+
+```{r}
+head(Titanic)
+```
+
+
+```{r}
+data(package = .packages(all.available = TRUE))
+```
+```{r}
+dataframe <- Titanic
+head(dataframe)
+```
+
+```{r}
+dataframe <- data.frame(dataframe)
+head(dataframe)
+```
+
+```{r}
+str(dataframe)
+```
+
+```{r}
+sum(is.null(dataframe))
+```
+
+
+```{r}
+#Spliting training set into two parts based on outcome: 75% and 25%
+index <- createDataPartition(dataframe$Survived, p=0.75, list=FALSE)
+trainSet <- dataframe[ index,]
+testSet <- dataframe[-index,]
+
+```
+
+```{r}
+str(trainSet)
+```
+
+```{r}
+#Feature selection using rfe in caret
+control <- rfeControl(functions = rfFuncs,
+                   method = "repeatedcv",
+                   repeats = 3,
+                   verbose = FALSE)
+```
+
+```{r}
+outcomeName<-'Survived'
+predictors<-c("Class", "Sex", "Age", "Freq")
+```
+
+```{r}
+trainSet[,predictors]
+```
+```{r}
+trainSet[,outcomeName]
+```
+
+
+```{r}
+Titanic_rf <- train(trainSet[,predictors],trainSet[,outcomeName],method='rf')
+Titanic_glm <- train(trainSet[,predictors],trainSet[,outcomeName],method='glm')
+Titanic_nnet <- train(trainSet[,predictors],trainSet[,outcomeName],method='nnet')
+```
+```{r}
+fitControl <- trainControl(
+  method = "repeatedcv",
+  number = 5,
+  repeats = 5)
+```
+```{r}
+model_nnet$method
+```
+
+
+```{r}
+#predictions_gbm<-predict.train(object=model_gbm,testSet[,predictors],type="prob")
+predictions_rf<-predict.train(object=Titanic_rf,testSet[,predictors],type="prob")
+predictions_glm<-predict.train(object=Titanic_glm,testSet[,predictors],type="prob")
+predictions_nnet<-predict.train(object=Titanic_nnet,testSet[,predictors],type="prob")
+#predictions_gbm<-predict.train(object=model_gbm,testSet[,predictors],type="raw")
+```
+```{r}
+predictions_rf_raw <- predict.train(object=Titanic_rf,testSet[,predictors],type="raw")
+predictions_glm_raw <-  predict.train(object=Titanic_glm,testSet[,predictors],type="raw")
+predictions_nnet_raw <- predict.train(object=Titanic_nnet,testSet[,predictors],type="raw")
+```
+
+```{r}
+Stack_object <- list(predictions_rf$Yes, predictions_glm$Yes, predictions_nnet$Yes)
+```
+```{r}
+names(Stack_object) <- c("model_rf", "model_glm", "model_nnet")
+```
+
+```{r}
+names(Stack_object)
+```
+
+```{r}
+Stack_object
+```
+
+```{r}
+#Stack_object$model_gbm <- as.numeric(Stack_object$model_gbm)
+Stack_object$model_rf <- as.numeric(Stack_object$model_rf)
+Stack_object$model_glm <- as.numeric(Stack_object$model_glm)
+Stack_object$model_nnet <- as.numeric(Stack_object$model_nnet)
+```
+
+```{r}
+head(Stack_object) 
+```
+```{r}
+target <- as.numeric(trainSet[,outcomeName])
+target
+```
+
+
+
+```{r}
+prediction_nonet <- nonet_ensemble(Stack_object, "model_nnet")
+```
+
+```{r}
+prediction_nonet
+```
+
+```{r}
+prediction_nonet <- as.factor(ifelse(prediction_nonet >= "0.5", "Yes", "No"))
+```
+
+```{r}
+prediction_nonet
+```
+
+```{r}
+#prediction_nonet <- relevel(prediction_nonet, ref="nonchilled")
+```
+
+
+```{r}
+prediction_nonet
+```
+
+```{r}
+confusionMatrix(prediction_nonet, testSet[,outcomeName])
+```
+
+```{r}
+predictions_rf_raw
+```
+
+```{r}
+confusionMatrix(predictions_glm_raw,testSet[,outcomeName])
+```
+```{r}
+confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
+```
+
+
+
+
+
+```{r}
+confusionMatrix(predictions_glm,testSet[,outcomeName])
+```
+
+```{r}
+confusionMatrix(predictions_nnet_raw,testSet[,outcomeName])
+```
+
+```{r}
+
+```
+

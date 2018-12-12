@@ -4,20 +4,61 @@
 #' @param object prediction_list object, as from `tune_models`
 #'
 #' @return A list of ensembled predictions. You can evaluate the performance of ensembled prediction using the evaulation matrix as Confusion matrix or AUROC.
+#' @export
+#' @import rlist
+#' @import ClusterR
+#' @import tidyverse
+#' @import caret
 #' @examples
-#' # Tune models using only the first 40 rows to keep computation fast
-#'
-#' models <- machine_learn(pima_diabetes[1:40, ], patient_id,
-#'                         outcome = diabetes, tune = FALSE)
-#'
-#' # Make prediction on the next 10 rows. This uses the best-performing model from
-#' # tuning cross validation, and it also prepares the new data in the same way as
-#' # the training data was prepared.
-#'
-#' predictions <- predict(models, newdata = pima_diabetes[41:50, ])
-#' predictions
-#' evaluate(predictions)
-#' plot(predictions)
+#' # nonet functionality can be explained via below example
+#' # Setup
+#' trainSet <- na.omit(banknote_authentication)[1:1029, ]
+#' testSet <- na.omit(banknote_authentication)[1029:1371, ]
+#' 
+#' trainSet$class <- as.factor(ifelse(trainSet$class >= 1, 'Yes', 'No'))
+#' testSet$class <- as.factor(ifelse(testSet$class >= 1, 'Yes', 'No'))
+#' 
+#' trainSet <- data.frame(trainSet)
+#' testSet <- data.frame(testSet)
+#' 
+#' #Feature selection 
+#' control <- rfeControl(functions = rfFuncs,
+#'   method = "repeatedcv",
+#'   repeats = 3,
+#'   verbose = FALSE)
+#' 
+#' outcomeName <- 'class'
+#' predictors <- c("variance", "skewness", "curtosis", "entropy")
+#' 
+#' banknote_rf <- train(trainSet[,predictors],trainSet[,outcomeName],method='rf')
+#' banknote_glm <- train(trainSet[,predictors],trainSet[,outcomeName],method='glm')
+#' banknote_nnet <- train(trainSet[,predictors],trainSet[,outcomeName],method='nnet')
+#' 
+#' 
+#' predictions_rf <- predict.train(object=Titanic_rf,testSet[,predictors],type="prob")
+#' predictions_glm <- predict.train(object=Titanic_glm,testSet[,predictors],type="prob")
+#' predictions_nnet <- predict.train(object=Titanic_nnet,testSet[,predictors],type="prob")
+#' 
+#' predictions_rf_raw <- predict.train(object=Titanic_rf,testSet[,predictors],type="raw")
+#' predictions_glm_raw <-  predict.train(object=Titanic_glm,testSet[,predictors],type="raw")
+#' predictions_nnet_raw <- predict.train(object=Titanic_nnet,testSet[,predictors],type="raw")
+#' 
+#' Stack_object <- list(predictions_rf$Yes, predictions_glm$Yes, predictions_nnet$Yes)
+#' 
+#' names(Stack_object) <- c("model_rf", "model_glm", "model_nnet")
+#' 
+#' # Prediction using nonet_ensemble function
+#' prediction_nonet <- nonet_ensemble(Stack_object, "model_nnet")
+#' # Converting probabilities into classes
+#' prediction_nonet <- as.factor(ifelse(prediction_nonet >= "0.5", "Yes", "No"))
+#' 
+#' # Results
+#' nonet_eval <- confusionMatrix(prediction_nonet, testSet[,outcomeName])
+#' nonet_eval
+#' confusionMatrix(predictions_glm_raw,testSet[,outcomeName])
+#' confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
+#' confusionMatrix(predictions_nnet_raw,testSet[,outcomeName])
+#' plot(nonet_eval)
 
 nonet_ensemble <- function(object, best_modelname) {
   mod <- best_modelname
@@ -45,9 +86,11 @@ nonet_ensemble <- function(object, best_modelname) {
   weight_model <- data.frame(weight_model_coefficient)
   weight_model$variables <- row.names(weight_model)
   weight_model <- weight_model[c("variables", "Estimate")][-1, ]
+  weight_model$Estimate <- abs(weight_model$Estimate)
+  weight_model$weight <- weight_model$Estimate / sum(weight_model$Estimate)
   Preds_new <- list.remove(prediction_list, 'response_variable')
-  Weighted_model <- map("*", Preds_new, weight_model$Estimate)
-  Weighted_model_updated <- list.append(Weighted_model, prediction_list$target_variable)
+  Weighted_model <- Map("*", Preds_new, weight_model$Estimate)
+  Weighted_model_updated <- list.append(Weighted_model, prediction_list$response_variable)
   add <- function(x) Reduce("+", x)
   preds_outcome <- add(Weighted_model_updated)
   return(preds_outcome)

@@ -1,8 +1,9 @@
 #' Create a list of predictions
 #'
 #' @param ... arguments supplied to the functions
-#'
 #' @return A list of ensembled predictions. This list can be used to provide as an input argument for nonet_ensemble function
+#' @export
+#' @import rlist
 #' @examples
 #' # Tune models using only the first 40 rows to keep computation fast
 #'
@@ -18,8 +19,7 @@
 #' evaluate(predictions)
 #' plot(predictions)
 
-nonet_prediction_stacking <- function(...){
-
+nonet_prediction_stacking <- function (...){
   dots <- list(...)
   if (is.null(dots)) {
     stop("Please provide the predictions from different models")
