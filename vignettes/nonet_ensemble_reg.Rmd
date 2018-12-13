@@ -1,6 +1,6 @@
 ```{r}
-#trainSet <- na.omit(banknote_authentication)[1:1030, ]
-#testSet <- na.omit(banknote_authentication)[1031:1372, ]
+library(caret)
+library(ggplot2)
 ```
 ```{r}
 dataframe <- data.frame(banknote_authentication)

@@ -16,8 +16,8 @@ control <- rfeControl(functions = rfFuncs,
   repeats = 3,
   verbose = FALSE)
 
-outcomeName <- 'class'
-predictors <- c("variance", "skewness")
+outcomeName <- 'entropy'
+predictors <- c("variance", "skewness", "class")
 
 banknote_lm_first <- train(trainSet[,predictors],trainSet[,outcomeName],method='lm')
 
@@ -34,8 +34,8 @@ control <- rfeControl(functions = rfFuncs,
   repeats = 3,
   verbose = FALSE)
 
-outcomeName <- 'class'
-predictors <- c("variance", "skewness")
+outcomeName <- 'entropy'
+predictors <- c("curtosis", "skewness", "class")
 
 banknote_lm_second <- train(trainSet[,predictors],trainSet[,outcomeName],method='lm')
 

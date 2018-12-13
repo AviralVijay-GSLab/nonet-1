@@ -59,20 +59,17 @@ prediction_nonet_raw <- nonet_ensemble(Stack_object, "Cluster_second")
 
 prediction_nonet <- as.factor(ifelse(prediction_nonet_raw >= "0.5", "0", "1"))
 
-confusionMatrix(prediction_nonet, testSet[,outcomeName])
-confusionMatrix(predict_cluster_first_class,testSet[,outcomeName])
-confusionMatrix(predict_cluster_Second_class,testSet[,outcomeName])
 
 # Test
 test_that("predict_cluster_first_class return numeric vector", {
-  purrr::map_lgl(predict_cluster_first_class, is.numeric) %>%
+  purrr::map_lgl(predict_cluster_first_class, is.factor) %>%
     all() %>%
     expect_true()
 })
 
 
 test_that("predict_cluster_Second_class return numeric vector", {
-  purrr::map_lgl(predict_cluster_Second_class, is.numeric) %>%
+  purrr::map_lgl(predict_cluster_Second_class, is.factor) %>%
     all() %>%
     expect_true()
 })
@@ -82,4 +79,12 @@ test_that("prediction_nonet_raw return numeric vector", {
   purrr::map_lgl(prediction_nonet_raw, is.numeric) %>%
     all() %>%
     expect_true()
+
+})
+
+test_that("prediction_nonet return numeric vector", {
+  purrr::map_lgl(prediction_nonet, is.factor) %>%
+    all() %>%
+    expect_true()
+  
 })

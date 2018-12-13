@@ -1,7 +1,9 @@
+
 ```{r}
-#trainSet <- na.omit(banknote_authentication)[1:1030, ]
-#testSet <- na.omit(banknote_authentication)[1031:1372, ]
+library(caret)
+library(ggplot2)
 ```
+
 ```{r}
 dataframe <- data.frame(banknote_authentication)
 head(dataframe)
@@ -46,7 +48,6 @@ banknote_nnet <- train(trainSet[,predictors],trainSet[,outcomeName],method='nnet
 
 
 ```{r}
-
 predictions_rf <- predict.train(object=banknote_rf,testSet[,predictors],type="prob")
 predictions_glm <- predict.train(object=banknote_glm,testSet[,predictors],type="prob")
 predictions_nnet <- predict.train(object=banknote_nnet,testSet[,predictors],type="prob")
@@ -63,27 +64,30 @@ predictions_nnet_raw <- predict.train(object=banknote_nnet,testSet[,predictors],
 Stack_object <- list(predictions_rf$Yes, predictions_glm$Yes, predictions_nnet$Yes)
 ```
 ```{r}
-a <- lapply(Stack_object, is.numeric)
-a
+#a <- lapply(Stack_object, is.numeric)
+#a
 ```
 ```{r}
- Equal_check <- function(x) {
-    if (x == FALSE) {
-      return(FALSE)
-    }
+# Equal_check <- function(x) {
+ #   if (x == FALSE) {
+ #     return(FALSE)
+ #   }
   }
 ```
 
 
 
 ```{r}
-b <- lapply(a, isTRUE)
-b
+#b <- lapply(a, isTRUE)
+#b
 ```
 
 
 ```{r}
 names(Stack_object) <- c("model_rf", "model_glm", "model_nnet")
+```
+```{r}
+#Stack_object
 ```
 
 
@@ -91,7 +95,7 @@ names(Stack_object) <- c("model_rf", "model_glm", "model_nnet")
 prediction_nonet_raw <- nonet_ensemble(Stack_object, "model_nnet")
 ```
 ```{r}
-prediction_nonet_raw
+#prediction_nonet_raw
 ```
 
 ```{r}
@@ -99,14 +103,94 @@ prediction_nonet_raw
 prediction_nonet <- as.factor(ifelse(prediction_nonet_raw >= "0.5", "Yes", "No"))
 ```
 ```{r}
-prediction_nonet
+#prediction_nonet
 ```
 
+```{r}
+#Prediction_stack <- list(predictions_rf_raw, predictions_glm_raw, predictions_nnet_raw, prediction_nonet, testSet[,outcomeName])
+#Prediction_stack
+```
+```{r}
+#names(Prediction_stack) <- c("model_rf", "model_glm", "model_nnet", "nonet", "Actual")
+```
+```{r}
+#prediction_df <- data.frame(Prediction_stack)
+#prediction_df
+```
+
+```{r}
+#library(ggplot2)
+#ggplot(Prediction_stack, aes(x = predictions_rf$Yes)) +
+#  geom_histogram()
+```
+```{r}
+#qplot(x=prediction_nonet_raw, geom="histogram")
+```
 
 
 ```{r}
-confusionMatrix(prediction_nonet, testSet[,outcomeName])
+#ggplot(lda.data, aes(LD1, LD2)) +
+#  geom_point(aes(color = Species))
 ```
+
+```{r}
+#ggplot(data = prediction_df, aes(x = model_glm, y = Actual)) +
+#geom_point(aes(color = nonet, size = 6, alpha = .5))
+```
+
+
+```{r}
+#qplot(c, Actual, data=prediction_df, color=, shape=, size=, alpha=, geom=, method=, formula=, facets=, xlim=, ylim= xlab=, ylab=, main=, sub=)
+```
+
+
+```{r}
+nonet_eval <- confusionMatrix(prediction_nonet, testSet[,outcomeName])
+```
+```{r}
+plot(nonet_eval$table)
+```
+```{r}
+nonet_eval_df <- data.frame(nonet_eval$table)
+nonet_eval_df
+```
+```{r}
+qplot(Reference, Prediction, data=nonet_eval_df, colour= Freq, geom = c("boxplot"), main = "predicted vs. observed in validation data", xlab = "Observed Classe", ylab = "Predicted Classe")
+```
+```{r}
+ggplot(data = nonet_eval_df, aes(x = Prediction, y = Reference)) +
+geom_point(aes(color = factor(Freq), size = 6, alpha = .5)) 
+ geom_point()
+```
+
+```{r}
+ggplot(data = nonet_eval_df, aes(x = Prediction, y = Reference)) +
+  geom_point(aes(color = factor(Freq), size = 10, alpha = .2))
+ geom_density()
+```
+```{r}
+ggplot(Stack_object_df, aes(Stack_object_df$model_glm)) + geom_histogram(bins=30)
+```
+
+
+```{r}
+qplot(Stack_object_df$model_glm, geom="histogram")
+```
+
+```{r}
+library(ggplot2)
+ggplot(Stack_object_df, aes(x = model_glm)) +
+  geom_histogram()
+```
+
+```{r}
+Stack_object_df <- data.frame(Stack_object)
+Stack_object_df
+
+```
+
+
+
 
 ```{r}
 confusionMatrix(predictions_glm_raw,testSet[,outcomeName])
