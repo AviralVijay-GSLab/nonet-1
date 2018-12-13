@@ -1,0 +1,70 @@
+context("Checking nonet_ensemble Regression")
+
+# Setup
+dataframe <- data.frame(banknote_authentication)
+
+#First Linear Regression Model
+index <- createDataPartition(dataframe$class, p=0.75, list=FALSE)
+trainSet <- dataframe[ index,]
+testSet <- dataframe[-index,]
+
+#Feature selection using rfe in caret
+control <- rfeControl(functions = rfFuncs,
+  method = "repeatedcv",
+  repeats = 3,
+  verbose = FALSE)
+
+outcomeName <- 'class'
+predictors <- c("variance", "skewness")
+
+banknote_lm_first <- train(trainSet[,predictors],trainSet[,outcomeName],method='lm')
+
+predictions_lm_first <- predict.train(object=banknote_lm_first, testSet[,predictors])
+
+# Second Linear Regression Model
+index <- createDataPartition(dataframe$class, p=0.75, list=FALSE)
+trainSet <- dataframe[ index,]
+testSet <- dataframe[-index,]
+
+#Feature selection using rfe in caret
+control <- rfeControl(functions = rfFuncs,
+  method = "repeatedcv",
+  repeats = 3,
+  verbose = FALSE)
+
+outcomeName <- 'class'
+predictors <- c("variance", "skewness")
+
+banknote_lm_second <- train(trainSet[,predictors],trainSet[,outcomeName],method='lm')
+
+predictions_lm_second <- predict.train(object=banknote_lm_second, testSet[,predictors])
+
+
+Stack_object <- list(predictions_lm_first, predictions_lm_second)
+
+names(Stack_object) <- c("lm_first", "lm_second")
+
+prediction_nonet <- nonet_ensemble(Stack_object, "lm_first")
+
+Actual_Pred <- data.frame(cbind(actuals= testSet[,outcomeName], predicteds=prediction_nonet))  # make actuals_predicteds dataframe.
+accuracy <- cor(Actual_Pred)
+
+# Test
+test_that("predictions_lm_first return numeric vector", {
+  purrr::map_lgl(predictions_lm_first, is.numeric) %>%
+    all() %>%
+    expect_true()
+})
+
+test_that("predictions_lm_second return numeric vector", {
+  purrr::map_lgl(predictions_lm_second, is.numeric) %>%
+    all() %>%
+    expect_true()
+})
+
+
+test_that("prediction_nonet return numeric vector", {
+  purrr::map_lgl(prediction_nonet, is.numeric) %>%
+    all() %>%
+    expect_true()
+})

@@ -1,6 +1,7 @@
 context("Checking nonet_ensemble Clustering")
 
 # Setup
+library(ClusterR)
 Bank_Note <- data.frame(banknote_authentication)
 dataframe <- Bank_Note
 dataframe$class <- as.factor(ifelse(dataframe$class >= 1, 'Yes', 'No'))
