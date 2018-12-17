@@ -1,4 +1,4 @@
-context("Checking nonet_ensemble Classification")
+context("Checking nonet_plot functionality")
 
 # Setup
 Bank_Note <- data.frame(banknote_authentication)
@@ -37,21 +37,27 @@ prediction_nonet_raw <- nonet_ensemble(Stack_object, "model_nnet")
 
 prediction_nonet <- as.factor(ifelse(prediction_nonet_raw >= "0.5", "Yes", "No"))
 
-confusionMatrix(prediction_nonet, testSet[,outcomeName])
-confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
-confusionMatrix(predictions_nnet_raw,testSet[,outcomeName])
+nonet_eval <- confusionMatrix(prediction_nonet, testSet[,outcomeName])
+nonet_eval_rf <- confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
+nonet_eval_nnet <- confusionMatrix(predictions_nnet_raw,testSet[,outcomeName])
+nonet_eval_df <- data.frame(nonet_eval$table)
+nonet_eval_rf_df <- data.frame(nonet_eval_rf$table)
+nonet_eval_nnet_df <- data.frame(nonet_eval_nnet$table)
+plot_first <- nonet_plot(nonet_eval_df$Prediction, nonet_eval_df$Reference, nonet_eval_df, plot_type = "point")
+plot_second <- nonet_plot(nonet_eval_rf_df$Prediction, nonet_eval_rf_df$Reference, nonet_eval_rf_df, plot_type = "boxplot")
+plot_third <- nonet_plot(nonet_eval_nnet_df$Prediction, nonet_eval_nnet_df$Reference, nonet_eval_nnet_df, plot_type = "density")
 
 # Test
-test_that("predictions_rf return numeric vector", {
-    expect_true(is.numeric(predictions_rf))
+test_that("plot_first is a ggplot", {
+  expect_is(plot_first,"ggplot")
 })
 
 
-test_that("predictions_nnet return numeric vector", {
-    expect_true(is.numeric(predictions_nnet))
+test_that("plot_second is a ggplot", {
+  expect_is(plot_second,"ggplot")
 })
 
 
-test_that("prediction_nonet_raw return numeric vector", {
-    expect_true(is.numeric(prediction_nonet_raw))
+test_that("plot_third is a ggplot", {
+  expect_is(plot_third,"ggplot")
 })

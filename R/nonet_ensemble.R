@@ -10,10 +10,14 @@
 #' @import tidyverse
 #' @import caret
 #' @examples
-#' # nonet functionality can be explained via below example
+#' # nonet ensemble functionality can be explained via below example
 #' # Setup
-#' trainSet <- na.omit(banknote_authentication)[1:1029, ]
-#' testSet <- na.omit(banknote_authentication)[1029:1371, ]
+#' dataframe <- data.frame(banknote_authentication)
+#' 
+#' # Spliting into train and test
+#' index <- createDataPartition(dataframe$class, p=0.75, list=FALSE)
+#' trainSet <- dataframe[ index,]
+#' testSet <- dataframe[-index,]
 #' 
 #' trainSet$class <- as.factor(ifelse(trainSet$class >= 1, 'Yes', 'No'))
 #' testSet$class <- as.factor(ifelse(testSet$class >= 1, 'Yes', 'No'))
@@ -31,21 +35,16 @@
 #' predictors <- c("variance", "skewness", "curtosis", "entropy")
 #' 
 #' banknote_rf <- train(trainSet[,predictors],trainSet[,outcomeName],method='rf')
-#' banknote_glm <- train(trainSet[,predictors],trainSet[,outcomeName],method='glm')
 #' banknote_nnet <- train(trainSet[,predictors],trainSet[,outcomeName],method='nnet')
 #' 
-#' 
 #' predictions_rf <- predict.train(object=Titanic_rf,testSet[,predictors],type="prob")
-#' predictions_glm <- predict.train(object=Titanic_glm,testSet[,predictors],type="prob")
 #' predictions_nnet <- predict.train(object=Titanic_nnet,testSet[,predictors],type="prob")
 #' 
 #' predictions_rf_raw <- predict.train(object=Titanic_rf,testSet[,predictors],type="raw")
-#' predictions_glm_raw <-  predict.train(object=Titanic_glm,testSet[,predictors],type="raw")
 #' predictions_nnet_raw <- predict.train(object=Titanic_nnet,testSet[,predictors],type="raw")
 #' 
-#' Stack_object <- list(predictions_rf$Yes, predictions_glm$Yes, predictions_nnet$Yes)
-#' 
-#' names(Stack_object) <- c("model_rf", "model_glm", "model_nnet")
+#' Stack_object <- list(predictions_rf$Yes, predictions_nnet$Yes)
+#' names(Stack_object) <- c("model_rf", "model_nnet")
 #' 
 #' # Prediction using nonet_ensemble function
 #' prediction_nonet <- nonet_ensemble(Stack_object, "model_nnet")
@@ -54,11 +53,9 @@
 #' 
 #' # Results
 #' nonet_eval <- confusionMatrix(prediction_nonet, testSet[,outcomeName])
-#' nonet_eval
-#' confusionMatrix(predictions_glm_raw,testSet[,outcomeName])
 #' confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
 #' confusionMatrix(predictions_nnet_raw,testSet[,outcomeName])
-#' plot(nonet_eval)
+#
 
 nonet_ensemble <- function(object, best_modelname) {
   mod <- best_modelname

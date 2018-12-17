@@ -2,7 +2,6 @@ context("Checking nonet_ensemble Regression")
 
 
 # Setup
-require(ClusterR)
 dataframe <- data.frame(banknote_authentication)
 
 #First Linear Regression Model

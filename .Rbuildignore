@@ -1,2 +1,4 @@
 ^nonet\.Rproj$
 ^\.Rproj\.user$
+^packrat/
+^\.Rprofile$

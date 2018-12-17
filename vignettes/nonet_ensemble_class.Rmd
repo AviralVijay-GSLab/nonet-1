@@ -2,6 +2,7 @@
 ```{r}
 library(caret)
 library(ggplot2)
+library(nonet)
 ```
 
 ```{r}
@@ -63,144 +64,74 @@ predictions_nnet_raw <- predict.train(object=banknote_nnet,testSet[,predictors],
 ```{r}
 Stack_object <- list(predictions_rf$Yes, predictions_glm$Yes, predictions_nnet$Yes)
 ```
-```{r}
-#a <- lapply(Stack_object, is.numeric)
-#a
-```
-```{r}
-# Equal_check <- function(x) {
- #   if (x == FALSE) {
- #     return(FALSE)
- #   }
-  }
-```
 
-
-
-```{r}
-#b <- lapply(a, isTRUE)
-#b
-```
 
 
 ```{r}
 names(Stack_object) <- c("model_rf", "model_glm", "model_nnet")
 ```
-```{r}
-#Stack_object
-```
 
+```{r}
+Stack_object_df <- data.frame(Stack_object)
+```
 
 ```{r}
 prediction_nonet_raw <- nonet_ensemble(Stack_object, "model_nnet")
 ```
-```{r}
-#prediction_nonet_raw
-```
 
 ```{r}
-
 prediction_nonet <- as.factor(ifelse(prediction_nonet_raw >= "0.5", "Yes", "No"))
 ```
+
 ```{r}
-#prediction_nonet
+nonet_eval <- confusionMatrix(prediction_nonet, testSet[,outcomeName])
 ```
 
 ```{r}
-#Prediction_stack <- list(predictions_rf_raw, predictions_glm_raw, predictions_nnet_raw, prediction_nonet, testSet[,outcomeName])
-#Prediction_stack
-```
-```{r}
-#names(Prediction_stack) <- c("model_rf", "model_glm", "model_nnet", "nonet", "Actual")
-```
-```{r}
-#prediction_df <- data.frame(Prediction_stack)
-#prediction_df
+nonet_eval_df <- data.frame(nonet_eval$table)
+nonet_eval_df
 ```
 
 ```{r}
-#library(ggplot2)
-#ggplot(Prediction_stack, aes(x = predictions_rf$Yes)) +
-#  geom_histogram()
-```
-```{r}
-#qplot(x=prediction_nonet_raw, geom="histogram")
-```
-
-
-```{r}
-#ggplot(lda.data, aes(LD1, LD2)) +
-#  geom_point(aes(color = Species))
+#plotted <- ggplot(data = nonet_eval_df, aes(x = Prediction, y = Reference)) + geom_point(size = 6, alpha = .5) + geom_point()
+#plotted
 ```
 
 ```{r}
-#ggplot(data = prediction_df, aes(x = model_glm, y = Actual)) +
-#geom_point(aes(color = nonet, size = 6, alpha = .5))
+#ggplot(data = nonet_eval_df, aes(x = Prediction, y = Reference)) +
+ # geom_point(aes(color = factor(Freq), size = 10, alpha = .2))
+ #geom_density()
 ```
-
-
 ```{r}
-#qplot(c, Actual, data=prediction_df, color=, shape=, size=, alpha=, geom=, method=, formula=, facets=, xlim=, ylim= xlab=, ylab=, main=, sub=)
+#ggplot(Stack_object_df, aes(Stack_object_df$model_glm)) + geom_histogram(bins=30)
 ```
 
 
 ```{r}
 nonet_eval <- confusionMatrix(prediction_nonet, testSet[,outcomeName])
-```
-```{r}
-plot(nonet_eval$table)
-```
-```{r}
+nonet_eval_rf <- confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
+nonet_eval_nnet <- confusionMatrix(predictions_nnet_raw,testSet[,outcomeName])
 nonet_eval_df <- data.frame(nonet_eval$table)
-nonet_eval_df
+nonet_eval_rf_df <- data.frame(nonet_eval_rf$table)
+nonet_eval_nnet_df <- data.frame(nonet_eval_nnet$table)
 ```
 ```{r}
-qplot(Reference, Prediction, data=nonet_eval_df, colour= Freq, geom = c("boxplot"), main = "predicted vs. observed in validation data", xlab = "Observed Classe", ylab = "Predicted Classe")
-```
-```{r}
-ggplot(data = nonet_eval_df, aes(x = Prediction, y = Reference)) +
-geom_point(aes(color = factor(Freq), size = 6, alpha = .5)) 
- geom_point()
-```
-
-```{r}
-ggplot(data = nonet_eval_df, aes(x = Prediction, y = Reference)) +
-  geom_point(aes(color = factor(Freq), size = 10, alpha = .2))
- geom_density()
-```
-```{r}
-ggplot(Stack_object_df, aes(Stack_object_df$model_glm)) + geom_histogram(bins=30)
-```
-
-
-```{r}
-qplot(Stack_object_df$model_glm, geom="histogram")
-```
-
-```{r}
-library(ggplot2)
-ggplot(Stack_object_df, aes(x = model_glm)) +
-  geom_histogram()
-```
-
-```{r}
-Stack_object_df <- data.frame(Stack_object)
-Stack_object_df
-
+nonet_eval_nnet_df$Prediction
 ```
 
 
 
-
 ```{r}
-confusionMatrix(predictions_glm_raw,testSet[,outcomeName])
+plot_first <- nonet_plot(nonet_eval_df$Prediction, nonet_eval_df$Reference, nonet_eval_df, plot_type = "point")
+plot_first
 ```
 
 ```{r}
-confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
+plot_second <- nonet_plot(nonet_eval_rf_df$Prediction, nonet_eval_rf_df$Reference, nonet_eval_rf_df, plot_type = "boxplot")
+plot_second
 ```
-
 ```{r}
-confusionMatrix(predictions_nnet_raw,testSet[,outcomeName])
+plot_third <- nonet_plot(nonet_eval_nnet_df$Prediction, nonet_eval_nnet_df$Reference, nonet_eval_nnet_df, plot_type = "density")
+plot_third
 ```
 
