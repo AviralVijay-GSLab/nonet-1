@@ -51,21 +51,16 @@ Actual_Pred <- data.frame(cbind(actuals= testSet[,outcomeName], predicteds=predi
 accuracy <- cor(Actual_Pred)
 
 # Test
+
 test_that("predictions_lm_first return numeric vector", {
-  purrr::map_lgl(predictions_lm_first, is.numeric) %>%
-    all() %>%
-    expect_true()
+  expect_is(predictions_lm_first, "numeric")
 })
 
 test_that("predictions_lm_second return numeric vector", {
-  purrr::map_lgl(predictions_lm_second, is.numeric) %>%
-    all() %>%
-    expect_true()
+  expect_is(predictions_lm_second, "numeric")
 })
-
 
 test_that("prediction_nonet return numeric vector", {
-  purrr::map_lgl(prediction_nonet, is.numeric) %>%
-    all() %>%
-    expect_true()
+  expect_is(prediction_nonet, "numeric")
 })
+

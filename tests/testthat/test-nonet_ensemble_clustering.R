@@ -61,30 +61,19 @@ prediction_nonet <- as.factor(ifelse(prediction_nonet_raw >= "0.5", "0", "1"))
 
 
 # Test
-test_that("predict_cluster_first_class return numeric vector", {
-  purrr::map_lgl(predict_cluster_first_class, is.factor) %>%
-    all() %>%
-    expect_true()
+
+test_that("predict_cluster_first_class return logical", {
+  expect_is(is.factor(predict_cluster_first_class), 'logical')
 })
 
-
-test_that("predict_cluster_Second_class return numeric vector", {
-  purrr::map_lgl(predict_cluster_Second_class, is.factor) %>%
-    all() %>%
-    expect_true()
+test_that("predict_cluster_Second_class return logical", {
+  expect_is(is.factor(predict_cluster_Second_class), 'logical')
 })
-
 
 test_that("prediction_nonet_raw return numeric vector", {
-  purrr::map_lgl(prediction_nonet_raw, is.numeric) %>%
-    all() %>%
-    expect_true()
-
+  expect_is(prediction_nonet_raw, "numeric")
 })
 
-test_that("prediction_nonet return numeric vector", {
-  purrr::map_lgl(prediction_nonet, is.factor) %>%
-    all() %>%
-    expect_true()
-  
+test_that("prediction_nonet return logical", {
+  expect_is(is.factor(prediction_nonet), 'logical')
 })

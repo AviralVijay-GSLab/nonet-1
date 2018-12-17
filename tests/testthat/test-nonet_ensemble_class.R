@@ -42,16 +42,16 @@ confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
 confusionMatrix(predictions_nnet_raw,testSet[,outcomeName])
 
 # Test
-test_that("predictions_rf return numeric vector", {
-    expect_true(is.numeric(predictions_rf))
+test_that("predictions_rf$Yes return numeric vector", {
+  expect_is(predictions_rf$Yes, "numeric")
 })
 
 
-test_that("predictions_nnet return numeric vector", {
-    expect_true(is.numeric(predictions_nnet))
+test_that("predictions_nnet$Yes return numeric vector", {
+  expect_is(predictions_nnet$Yes, "numeric")
 })
 
 
 test_that("prediction_nonet_raw return numeric vector", {
-    expect_true(is.numeric(prediction_nonet_raw))
+  expect_is(prediction_nonet_raw, "numeric")
 })
