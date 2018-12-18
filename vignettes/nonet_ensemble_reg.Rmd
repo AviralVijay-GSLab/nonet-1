@@ -1,17 +1,57 @@
+---
+title: "nonet_ensemble regression with nonet_plot"
+author: "Aviral Vijay"
+date: "`r Sys.Date()`"
+output: html_vignette
+vignette: >
+  %\VignetteIndexEntry{nonet ensemble regression with nonet plot}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
 ```{r}
 library(caret)
 library(ggplot2)
 ```
+
+
 ```{r}
+# Setup
 dataframe <- data.frame(banknote_authentication)
-head(dataframe)
 ```
+
+## First Linear Regression Model
+```{r}
+index <- createDataPartition(dataframe$class, p=0.75, list=FALSE)
+trainSet <- dataframe[ index,]
+testSet <- dataframe[-index,]
+```
+
+### Feature selection using rfe in caret
+```{r}
+control <- rfeControl(functions = rfFuncs,
+  method = "repeatedcv",
+  repeats = 3,
+  verbose = FALSE)
+```
+
 
 ```{r}
-dataframe <- data.frame(dataframe)
-head(dataframe)
+outcomeName <- 'entropy'
+predictors <- c("variance", "skewness", "class")
 ```
 
+
+```{r}
+banknote_lm_first <- train(trainSet[,predictors],trainSet[,outcomeName],method='lm')
+```
+
+### Predictions on testSet
+```{r}
+predictions_lm_first <- predict.train(object=banknote_lm_first, testSet[,predictors])
+```
+
+## Second Linear Regression Model
 ```{r}
 index <- createDataPartition(dataframe$class, p=0.75, list=FALSE)
 trainSet <- dataframe[ index,]
@@ -19,101 +59,67 @@ testSet <- dataframe[-index,]
 ```
 
 
-
+### Feature selection using rfe in caret
 ```{r}
-#Feature selection using rfe in caret
 control <- rfeControl(functions = rfFuncs,
   method = "repeatedcv",
   repeats = 3,
   verbose = FALSE)
-
 ```
 
 ```{r}
-outcomeName <- 'class'
-predictors <- c("variance", "skewness", "curtosis", "entropy")
+outcomeName <- 'entropy'
+predictors <- c("curtosis", "skewness", "class")
 ```
 
-
+### Model Training
 ```{r}
-banknote_rf <- train(trainSet[,predictors],trainSet[,outcomeName],method='rf')
-banknote_glm <- train(trainSet[,predictors],trainSet[,outcomeName],method='glm')
-banknote_nnet <- train(trainSet[,predictors],trainSet[,outcomeName],method='nnet')
+banknote_lm_second <- train(trainSet[,predictors],trainSet[,outcomeName],method='lm')
 ```
 
-
+### Predictions on testSet
 ```{r}
-
-predictions_rf <- predict.train(object=banknote_rf,testSet[,predictors],type="prob")
-predictions_glm <- predict.train(object=banknote_glm,testSet[,predictors],type="prob")
-predictions_nnet <- predict.train(object=banknote_nnet,testSet[,predictors],type="prob")
+predictions_lm_second <- predict.train(object=banknote_lm_second, testSet[,predictors])
 ```
 
 
 ```{r}
-predictions_rf_raw <- predict.train(object=banknote_rf,testSet[,predictors],type="raw")
-predictions_glm_raw <-  predict.train(object=banknote_glm,testSet[,predictors],type="raw")
-predictions_nnet_raw <- predict.train(object=banknote_nnet,testSet[,predictors],type="raw")
+Stack_object <- list(predictions_lm_first, predictions_lm_second)
 ```
 
 ```{r}
-Stack_object <- list(predictions_rf$Yes, predictions_glm$Yes, predictions_nnet$Yes)
-```
-```{r}
-a <- lapply(Stack_object, is.numeric)
-a
-```
-```{r}
- Equal_check <- function(x) {
-    if (x == FALSE) {
-      return(FALSE)
-    }
-  }
-```
-
-
-
-```{r}
-b <- lapply(a, isTRUE)
-b
-```
-
-
-```{r}
-names(Stack_object) <- c("model_rf", "model_glm", "model_nnet")
-```
-
-
-```{r}
-prediction_nonet_raw <- nonet_ensemble(Stack_object, "model_nnet")
-```
-```{r}
-prediction_nonet_raw
+names(Stack_object) <- c("lm_first", "lm_second")
 ```
 
 ```{r}
-
-prediction_nonet <- as.factor(ifelse(prediction_nonet_raw >= "0.5", "Yes", "No"))
-```
-```{r}
-prediction_nonet
-```
-
-
-
-```{r}
-confusionMatrix(prediction_nonet, testSet[,outcomeName])
+prediction_nonet <- nonet_ensemble(Stack_object, "lm_first")
 ```
 
 ```{r}
-confusionMatrix(predictions_glm_raw,testSet[,outcomeName])
+Actual_Pred <- data.frame(cbind(actuals = testSet[,outcomeName], predictions = prediction_nonet))  
+head(Actual_Pred)
 ```
 
+# make actuals_predicteds dataframe.
 ```{r}
-confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
+accuracy <- cor(Actual_Pred)
+accuracy
 ```
 
-```{r}
-confusionMatrix(predictions_nnet_raw,testSet[,outcomeName])
+```{r, warning = FALSE}
+plot_first <- nonet_plot(Actual_Pred$actuals, Actual_Pred$predictions, Actual_Pred, plot_type = "hist")
+plot_first
 ```
+
+
+```{r, warning = FALSE}
+plot_second <- nonet_plot(Actual_Pred$predictions, Actual_Pred$actuals, Actual_Pred, plot_type = "hist")
+plot_second
+```
+
+
+
+
+
+
 

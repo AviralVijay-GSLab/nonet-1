@@ -47,7 +47,7 @@ names(Stack_object) <- c("lm_first", "lm_second")
 
 prediction_nonet <- nonet_ensemble(Stack_object, "lm_first")
 
-Actual_Pred <- data.frame(cbind(actuals= testSet[,outcomeName], predicteds=prediction_nonet))  # make actuals_predicteds dataframe.
+Actual_Pred <- data.frame(cbind(actuals = testSet[,outcomeName], predictions = prediction_nonet))  
 accuracy <- cor(Actual_Pred)
 
 # Test
