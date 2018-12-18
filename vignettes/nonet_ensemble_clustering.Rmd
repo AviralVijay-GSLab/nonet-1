@@ -1,4 +1,13 @@
-
+---
+title: "nonet_ensemble Clustering with nonet_plot"
+author: "Aviral Vijay"
+date: "`r Sys.Date()`"
+output: html_vignette
+vignette: >
+  %\VignetteIndexEntry{nonet ensemble Clustering with nonet plot}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
 
 ```{r}
 library(caret)
@@ -185,7 +194,7 @@ head(Prediction_dataframe)
 
 
 ```{r, warning = FALSE}
-plot_first <- nonet_plot(Prediction_dataframe$pred_nonet, y = NULL, Prediction_dataframe, plot_type = "hist")
+plot_first <- nonet_plot(Prediction_dataframe$pred_nonet, Prediction_dataframe$pred_clust_first, Prediction_dataframe, plot_type = "hist")
 ```
 
 ```{r}
@@ -194,26 +203,13 @@ plot_first
 
 
 ```{r, warning = FALSE}
-plot_second <- nonet_plot(Prediction_dataframe$pred_clust_first,  y = NULL, Prediction_dataframe, plot_type = "hist")
+plot_second <- nonet_plot(Prediction_dataframe$pred_clust_first,  Prediction_dataframe$pred_clust_second, Prediction_dataframe, plot_type = "hist")
 plot_second
 ```
 ```{r, warning = FALSE}
-plot_third <- nonet_plot(Prediction_dataframe$pred_clust_second,  y = NULL, Prediction_dataframe, plot_type = "hist")
+plot_third <- nonet_plot(Prediction_dataframe$pred_clust_second,  Prediction_dataframe$pred_clust_first, Prediction_dataframe, plot_type = "hist")
 plot_third
 ```
 
 
-
-
-```{r}
-#confusionMatrix(prediction_nonet_class, trainSet[,outcomeName])
-```
-```{r}
-#confusionMatrix(predict_cluster_first_class,trainSet[,outcomeName])
-
-```
-
-```{r}
-#confusionMatrix(predict_cluster_Second_class,trainSet[,outcomeName])
-```
 
