@@ -24,6 +24,7 @@ RoxygenNote: 6.1.1
 Suggests:
     testthat,
     lintr,
+    VignetteBuilder,
     knitr,
     rmarkdown
 URL: http://docs.healthcare.ai
