@@ -74,9 +74,9 @@
 #' nonet_eval_df <- data.frame(nonet_eval$table)
 #' nonet_eval_rf_df <- data.frame(nonet_eval_rf$table)
 #' nonet_eval_nnet_df <- data.frame(nonet_eval_nnet$table)
-#' nonet_plot(Prediction, Reference, nonet_eval_df, plot_type = "point")
-#' nonet_plot(Prediction, Reference, nonet_eval_rf_df, plot_type = "boxplot")
-#' nonet_plot(Prediction, Reference, nonet_eval_nnet_df, plot_type = "density")
+#' nonet_plot(nonet_eval_df$Prediction, nonet_eval_df$Reference, nonet_eval_df, plot_type = "point")
+#' nonet_plot(nonet_eval_rf_df$Prediction, nonet_eval_rf_df$Reference, nonet_eval_rf_df, plot_type = "boxplot")
+#' nonet_plot(nonet_eval_nnet_df$Prediction, nonet_eval_nnet_df$Reference, nonet_eval_nnet_df, plot_type = "density")
 
 nonet_plot <- function (x, y, dataframe, plot_type = NULL , nonet_size = 20, nonet_alpha = .3, nonet_bins = 25) {
   
