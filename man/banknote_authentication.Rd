@@ -2,12 +2,8 @@
 \alias{banknote_authentication}
 \docType{data}
 \title{Bank Note Authentication Data Set}
-\description{Bank Note Authentication DataSet is used to show the functionality of nonet package. It has below attribute information:- 
-  \describe{\item {1. variance of Wavelet Transformed image (continuous)}}
-  \describe{\item {2. skewness of Wavelet Transformed image (continuous)}}
-  \describe{\item {3. curtosis of Wavelet Transformed image (continuous)}}
-  \describe{ \item {4. entropy of image (continuous)}}
-  \describe{\item {5. class (integer)}}
+\description{
+Bank Note Authentication Data Set is used to show the functionality of nonet package. This Data Set has below attribute information as variance of Wavelet Transformed image (continuous), skewness of Wavelet Transformed image (continuous), curtosis of Wavelet Transformed image (continuous),entropy of image (continuous), class (integer).
 }
 \usage{data("banknote_authentication")}
 \format{
