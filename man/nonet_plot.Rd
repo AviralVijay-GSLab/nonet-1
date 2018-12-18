@@ -4,44 +4,78 @@
 \alias{nonet_plot}
 \title{Plot the predictions or results of nonet_ensemble}
 \usage{
-nonet_plot(x, y, dataframe, plot_type, nonet_color, nonet_size,
-  nonet_alpha, nonet_bins)
+nonet_plot(x, y, dataframe, plot_type = NULL, nonet_size = 20,
+  nonet_alpha = 0.3, nonet_bins = 25)
 }
 \arguments{
-\item{x}{}
+\item{x}{x axis variable name or histogram entity name}
 
-\item{y}{}
+\item{y}{y axis variable name}
 
-\item{plot_type}{}
+\item{dataframe}{dataframe which is used for plotting purpose.}
 
-\item{nonet_color}{}
+\item{plot_type}{type of plot, if not provided it takes "NULL"}
 
-\item{nonet_size}{}
+\item{nonet_size}{size of plot need to feed in ggplot}
 
-\item{nonet_alpha}{}
+\item{nonet_alpha}{value of alpha for ggplot}
 
-\item{nonet_bins}{}
-
-\item{data}{}
+\item{nonet_bins}{number of bins for histogram}
 }
 \value{
-A list of ensembled predictions. This list can be used to provide as an input argument for nonet_ensemble function
+plotted for the plot results provided as input.
 }
 \description{
 Plot the predictions or results of nonet_ensemble
 }
 \examples{
-# Tune models using only the first 40 rows to keep computation fast
+# nonet functionality can be explained via below example
+# Setup
+trainSet <- na.omit(banknote_authentication)[1:1029, ]
+testSet <- na.omit(banknote_authentication)[1029:1371, ]
 
-models <- machine_learn(pima_diabetes[1:40, ], patient_id,
-                        outcome = diabetes, tune = FALSE)
+trainSet$class <- as.factor(ifelse(trainSet$class >= 1, 'Yes', 'No'))
+testSet$class <- as.factor(ifelse(testSet$class >= 1, 'Yes', 'No'))
 
-# Make prediction on the next 10 rows. This uses the best-performing model from
-# tuning cross validation, and it also prepares the new data in the same way as
-# the training data was prepared.
+trainSet <- data.frame(trainSet)
+testSet <- data.frame(testSet)
 
-predictions <- predict(models, newdata = pima_diabetes[41:50, ])
-predictions
-evaluate(predictions)
-plot(predictions)
+#Feature selection 
+control <- rfeControl(functions = rfFuncs,
+  method = "repeatedcv",
+  repeats = 3,
+  verbose = FALSE)
+
+outcomeName <- 'class'
+predictors <- c("variance", "skewness", "curtosis", "entropy")
+
+banknote_rf <- train(trainSet[,predictors],trainSet[,outcomeName],method='rf')
+banknote_nnet <- train(trainSet[,predictors],trainSet[,outcomeName],method='nnet')
+
+
+predictions_rf <- predict.train(object=Titanic_rf,testSet[,predictors],type="prob")
+predictions_nnet <- predict.train(object=Titanic_nnet,testSet[,predictors],type="prob")
+
+predictions_rf_raw <- predict.train(object=Titanic_rf,testSet[,predictors],type="raw")
+predictions_nnet_raw <- predict.train(object=Titanic_nnet,testSet[,predictors],type="raw")
+
+Stack_object <- list(predictions_rf$Yes, predictions_nnet$Yes)
+
+names(Stack_object) <- c("model_rf", "model_nnet")
+
+# Prediction using nonet_ensemble function
+prediction_nonet <- nonet_ensemble(Stack_object, "model_nnet")
+# Converting probabilities into classes
+prediction_nonet <- as.factor(ifelse(prediction_nonet >= "0.5", "Yes", "No"))
+
+# Results
+nonet_eval <- confusionMatrix(prediction_nonet, testSet[,outcomeName])
+nonet_eval_rf <- confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
+nonet_eval_nnet <- confusionMatrix(predictions_nnet_raw,testSet[,outcomeName])
+nonet_eval_df <- data.frame(nonet_eval$table)
+nonet_eval_rf_df <- data.frame(nonet_eval_rf$table)
+nonet_eval_nnet_df <- data.frame(nonet_eval_nnet_df$table)
+nonet_plot(Prediction, Reference, nonet_eval_df, plot_type = "point")
+nonet_plot(Prediction, Reference, nonet_eval_rf_df, plot_type = "boxplot")
+nonet_plot(Prediction, Reference, nonet_eval_nnet_df, plot_type = "density")
 }

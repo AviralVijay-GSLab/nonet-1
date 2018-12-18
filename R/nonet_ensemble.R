@@ -5,13 +5,22 @@
 #'
 #' @return A list of ensembled predictions. You can evaluate the performance of ensembled prediction using the evaulation matrix as Confusion matrix or AUROC.
 #' @export
+#' @import caret
 #' @import rlist
 #' @import ClusterR
 #' @import tidyverse
-#' @import caret
+#' @import tidyverse
+#' @import glmnet
+#' 
 #' @examples
-#' # nonet ensemble functionality can be explained via below example
+#' # nonet_ensemble functionality can be explained via below example
 #' # Setup
+#' library(caret)
+#' library(nonet)
+#' library(ggplot)
+#' library(rlist)
+#' 
+#' # Load Data
 #' dataframe <- data.frame(banknote_authentication)
 #' 
 #' # Spliting into train and test
