@@ -18,8 +18,14 @@ A list of ensembled predictions. You can evaluate the performance of ensembled p
 Ensemble Prediction without using training labels
 }
 \examples{
-# nonet ensemble functionality can be explained via below example
+# nonet_ensemble functionality can be explained via below example
 # Setup
+library(caret)
+library(nonet)
+library(ggplot)
+library(rlist)
+
+# Load Data
 dataframe <- data.frame(banknote_authentication)
 
 # Spliting into train and test

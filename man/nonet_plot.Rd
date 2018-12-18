@@ -29,10 +29,20 @@ plotted for the plot results provided as input.
 Plot the predictions or results of nonet_ensemble
 }
 \examples{
-# nonet functionality can be explained via below example
+# nonet_plot functionality can be explained via below example
 # Setup
-trainSet <- na.omit(banknote_authentication)[1:1029, ]
-testSet <- na.omit(banknote_authentication)[1029:1371, ]
+library(caret)
+library(nonet)
+library(ggplot)
+library(rlist)
+
+# Load Data
+dataframe <- data.frame(banknote_authentication)
+
+# Spliting into train and test
+index <- createDataPartition(dataframe$class, p=0.75, list=FALSE)
+trainSet <- dataframe[ index,]
+testSet <- dataframe[-index,]
 
 trainSet$class <- as.factor(ifelse(trainSet$class >= 1, 'Yes', 'No'))
 testSet$class <- as.factor(ifelse(testSet$class >= 1, 'Yes', 'No'))
@@ -49,6 +59,7 @@ control <- rfeControl(functions = rfFuncs,
 outcomeName <- 'class'
 predictors <- c("variance", "skewness", "curtosis", "entropy")
 
+# Model Training
 banknote_rf <- train(trainSet[,predictors],trainSet[,outcomeName],method='rf')
 banknote_nnet <- train(trainSet[,predictors],trainSet[,outcomeName],method='nnet')
 

@@ -11,6 +11,7 @@
 #' @import tidyverse
 #' @import tidyverse
 #' @import glmnet
+#' @import ggplot
 #' 
 #' @examples
 #' # nonet_ensemble functionality can be explained via below example

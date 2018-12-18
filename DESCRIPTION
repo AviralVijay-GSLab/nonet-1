@@ -11,6 +11,7 @@ Imports:
     caret (>= 6.0.78),
     dplyr,
     randomForest,
+    ggplot,
     rlist (>= 0.4.6.1),
     glmnet,
     tidyverse,
