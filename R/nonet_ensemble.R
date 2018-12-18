@@ -10,8 +10,9 @@
 #' @import ClusterR
 #' @import tidyverse
 #' @import tidyverse
-#' @import glmnet
+#' @import stats
 #' @import ggplot2
+#' @import glmnet
 #' 
 #' @examples
 #' # nonet_ensemble functionality can be explained via below example
@@ -47,11 +48,11 @@
 #' banknote_rf <- train(trainSet[,predictors],trainSet[,outcomeName],method='rf')
 #' banknote_nnet <- train(trainSet[,predictors],trainSet[,outcomeName],method='nnet')
 #' 
-#' predictions_rf <- predict.train(object=Titanic_rf,testSet[,predictors],type="prob")
-#' predictions_nnet <- predict.train(object=Titanic_nnet,testSet[,predictors],type="prob")
+#' predictions_rf <- predict.train(object=banknote_rf,testSet[,predictors],type="prob")
+#' predictions_nnet <- predict.train(object=banknote_nnet,testSet[,predictors],type="prob")
 #' 
-#' predictions_rf_raw <- predict.train(object=Titanic_rf,testSet[,predictors],type="raw")
-#' predictions_nnet_raw <- predict.train(object=Titanic_nnet,testSet[,predictors],type="raw")
+#' predictions_rf_raw <- predict.train(object=banknote_rf,testSet[,predictors],type="raw")
+#' predictions_nnet_raw <- predict.train(object=banknote_nnet,testSet[,predictors],type="raw")
 #' 
 #' Stack_object <- list(predictions_rf$Yes, predictions_nnet$Yes)
 #' names(Stack_object) <- c("model_rf", "model_nnet")

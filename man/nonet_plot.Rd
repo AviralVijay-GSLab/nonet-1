@@ -33,7 +33,7 @@ Plot the predictions or results of nonet_ensemble
 # Setup
 library(caret)
 library(nonet)
-library(ggplot)
+library(ggplot2)
 library(rlist)
 
 # Load Data

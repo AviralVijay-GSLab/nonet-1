@@ -22,7 +22,7 @@ Ensemble Prediction without using training labels
 # Setup
 library(caret)
 library(nonet)
-library(ggplot)
+library(ggplot2)
 library(rlist)
 
 # Load Data
@@ -69,4 +69,5 @@ prediction_nonet <- as.factor(ifelse(prediction_nonet >= "0.5", "Yes", "No"))
 nonet_eval <- confusionMatrix(prediction_nonet, testSet[,outcomeName])
 confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
 confusionMatrix(predictions_nnet_raw,testSet[,outcomeName])
+
 }
