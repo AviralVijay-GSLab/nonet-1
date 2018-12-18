@@ -11,14 +11,14 @@
 #' @import tidyverse
 #' @import tidyverse
 #' @import glmnet
-#' @import ggplot
+#' @import ggplot2
 #' 
 #' @examples
 #' # nonet_ensemble functionality can be explained via below example
 #' # Setup
 #' library(caret)
 #' library(nonet)
-#' library(ggplot)
+#' library(ggplot2)
 #' library(rlist)
 #' 
 #' # Load Data
@@ -65,7 +65,7 @@
 #' nonet_eval <- confusionMatrix(prediction_nonet, testSet[,outcomeName])
 #' confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
 #' confusionMatrix(predictions_nnet_raw,testSet[,outcomeName])
-#
+#'
 
 nonet_ensemble <- function(object, best_modelname) {
   mod <- best_modelname

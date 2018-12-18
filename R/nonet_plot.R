@@ -11,7 +11,7 @@
 #' @return plotted for the plot results provided as input.
 #' @export
 #' @import caret
-#' @import ggplot
+#' @import ggplot2
 #' @import rlist
 #' @import ClusterR
 #' @import tidyverse
@@ -21,7 +21,7 @@
 #' # Setup
 #' library(caret)
 #' library(nonet)
-#' library(ggplot)
+#' library(ggplot2)
 #' library(rlist)
 #' 
 #' # Load Data
