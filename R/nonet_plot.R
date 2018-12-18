@@ -78,7 +78,7 @@
 #' nonet_plot(nonet_eval_rf_df$Prediction, nonet_eval_rf_df$Reference, nonet_eval_rf_df, plot_type = "boxplot")
 #' nonet_plot(nonet_eval_nnet_df$Prediction, nonet_eval_nnet_df$Reference, nonet_eval_nnet_df, plot_type = "density")
 
-nonet_plot <- function (x, y, dataframe, plot_type = NULL , nonet_size = 20, nonet_alpha = .3, nonet_bins = 25) {
+nonet_plot <- function (x, y = NULL, dataframe, plot_type = NULL , nonet_size = 20, nonet_alpha = .3, nonet_bins = 25) {
   
   if (is.null(dataframe)) {
     stop("Please provide the not null values in the dataframe")
@@ -94,25 +94,25 @@ nonet_plot <- function (x, y, dataframe, plot_type = NULL , nonet_size = 20, non
       }
       else{
         if (plot_type == "NULL") {
-           plotted <- ggplot(data = dataframe, aes(x = dataframe$x, y = dataframe$y)) +
+           plotted <- ggplot(data = dataframe, aes(x = "Independent_variable", y = "Dependent_variable")) +
             geom_point(size = nonet_size, alpha = nonet_alpha) +
             geom_point()
         }
         else{
-          if (plot_type == "point") {
-            plotted <- ggplot(data = dataframe, aes(x = x, y = y)) +
+          if (plot_type == "point" && (is.null(y) == FALSE)) {
+            plotted <- ggplot(data = dataframe, aes(x = "Independent_variable", y = "Dependent_variable")) +
               geom_point(size = nonet_size, alpha = nonet_alpha) +
               geom_point()
           }
           else{
-            if (plot_type == "boxplot") {
-              plotted <- ggplot(data = dataframe, aes(x = x, y = y)) +
+            if (plot_type == "boxplot" && (is.null(y) == FALSE)) {
+              plotted <- ggplot(data = dataframe, aes(x = "Independent_variable", y = "Dependent_variable")) +
                 geom_point(size = nonet_size, alpha = nonet_alpha) +
                 geom_boxplot()
             }
             else{
-              if (plot_type == "density") {
-                plotted <- ggplot(data = dataframe, aes(x = x, y = y)) +
+              if (plot_type == "density" && (is.null(y) == FALSE)) {
+                plotted <- ggplot(data = dataframe, aes(x = "Independent_variable", y = "Dependent_variable")) +
                   geom_point(size = nonet_size, alpha = nonet_alpha) +
                  geom_density()
               }

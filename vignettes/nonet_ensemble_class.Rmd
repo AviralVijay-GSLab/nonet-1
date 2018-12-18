@@ -1,3 +1,13 @@
+---
+title: "nonet_ensemble classification with nonet_plot"
+author: "Aviral Vijay"
+date: "`r Sys.Date()`"
+output: html_vignette
+vignette: >
+  %\VignetteIndexEntry{nonet ensemble classification with nonet plot}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
 
 ```{r}
 library(caret)
@@ -11,12 +21,10 @@ head(dataframe)
 ```
 ```{r}
 dataframe$class <- as.factor(ifelse(dataframe$class >= 1, 'Yes', 'No'))
-dataframe
-```
-```{r}
 dataframe <- data.frame(dataframe)
 head(dataframe)
 ```
+
 
 ```{r}
 index <- createDataPartition(dataframe$class, p=0.75, list=FALSE)
@@ -41,34 +49,34 @@ predictors <- c("variance", "skewness", "curtosis", "entropy")
 ```
 
 
-```{r}
+```{r, message = FALSE, results = "hide"}
 banknote_rf <- train(trainSet[,predictors],trainSet[,outcomeName],method='rf')
-banknote_glm <- train(trainSet[,predictors],trainSet[,outcomeName],method='glm')
+```
+```{r, message = FALSE, results = "hide"}
 banknote_nnet <- train(trainSet[,predictors],trainSet[,outcomeName],method='nnet')
 ```
 
 
+
 ```{r}
 predictions_rf <- predict.train(object=banknote_rf,testSet[,predictors],type="prob")
-predictions_glm <- predict.train(object=banknote_glm,testSet[,predictors],type="prob")
 predictions_nnet <- predict.train(object=banknote_nnet,testSet[,predictors],type="prob")
 ```
 
 
 ```{r}
 predictions_rf_raw <- predict.train(object=banknote_rf,testSet[,predictors],type="raw")
-predictions_glm_raw <-  predict.train(object=banknote_glm,testSet[,predictors],type="raw")
 predictions_nnet_raw <- predict.train(object=banknote_nnet,testSet[,predictors],type="raw")
 ```
 
 ```{r}
-Stack_object <- list(predictions_rf$Yes, predictions_glm$Yes, predictions_nnet$Yes)
+Stack_object <- list(predictions_rf$Yes, predictions_nnet$Yes)
 ```
 
 
 
 ```{r}
-names(Stack_object) <- c("model_rf", "model_glm", "model_nnet")
+names(Stack_object) <- c("model_rf", "model_nnet")
 ```
 
 ```{r}
@@ -89,23 +97,7 @@ nonet_eval <- confusionMatrix(prediction_nonet, testSet[,outcomeName])
 
 ```{r}
 nonet_eval_df <- data.frame(nonet_eval$table)
-nonet_eval_df
 ```
-
-```{r}
-#plotted <- ggplot(data = nonet_eval_df, aes(x = Prediction, y = Reference)) + geom_point(size = 6, alpha = .5) + geom_point()
-#plotted
-```
-
-```{r}
-#ggplot(data = nonet_eval_df, aes(x = Prediction, y = Reference)) +
- # geom_point(aes(color = factor(Freq), size = 10, alpha = .2))
- #geom_density()
-```
-```{r}
-#ggplot(Stack_object_df, aes(Stack_object_df$model_glm)) + geom_histogram(bins=30)
-```
-
 
 ```{r}
 nonet_eval <- confusionMatrix(prediction_nonet, testSet[,outcomeName])
@@ -115,22 +107,17 @@ nonet_eval_df <- data.frame(nonet_eval$table)
 nonet_eval_rf_df <- data.frame(nonet_eval_rf$table)
 nonet_eval_nnet_df <- data.frame(nonet_eval_nnet$table)
 ```
-```{r}
-nonet_eval_nnet_df$Prediction
-```
 
-
-
-```{r}
+```{r, warning = FALSE}
 plot_first <- nonet_plot(nonet_eval_df$Prediction, nonet_eval_df$Reference, nonet_eval_df, plot_type = "point")
 plot_first
 ```
 
-```{r}
+```{r, warning = FALSE}
 plot_second <- nonet_plot(nonet_eval_rf_df$Prediction, nonet_eval_rf_df$Reference, nonet_eval_rf_df, plot_type = "boxplot")
 plot_second
 ```
-```{r}
+```{r, warning = FALSE}
 plot_third <- nonet_plot(nonet_eval_nnet_df$Prediction, nonet_eval_nnet_df$Reference, nonet_eval_nnet_df, plot_type = "density")
 plot_third
 ```

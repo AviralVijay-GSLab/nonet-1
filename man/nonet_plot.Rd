@@ -4,7 +4,7 @@
 \alias{nonet_plot}
 \title{Plot the predictions or results of nonet_ensemble}
 \usage{
-nonet_plot(x, y, dataframe, plot_type = NULL, nonet_size = 20,
+nonet_plot(x, y = NULL, dataframe, plot_type = NULL, nonet_size = 20,
   nonet_alpha = 0.3, nonet_bins = 25)
 }
 \arguments{

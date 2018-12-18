@@ -1,7 +1,4 @@
----
-title: "nonet ensemble clustering"
-output: html_notebook
----
+
 
 ```{r}
 library(caret)
@@ -85,11 +82,6 @@ head(predict_cluster_first_class)
 ```{r}
 head(predict_clustering_first$cluster_labels)
 ```
-
-
-
-
-
 
 ## Second Model
 
@@ -177,14 +169,51 @@ prediction_nonet_class <- as.factor(ifelse(prediction_nonet >= "0.5", "1", "0"))
 ```
 
 ```{r}
-confusionMatrix(prediction_nonet_class, trainSet[,outcomeName])
+Prediction_data <- list(prediction_nonet, predict_clustering_first$cluster_proba[, 2], predict_clustering_Second$cluster_proba[, 2])
+```
+
+
+
+```{r}
+names(Prediction_data) <- c("pred_nonet", "pred_clust_first", "pred_clust_second")
+```
+
+```{r}
+Prediction_dataframe <- data.frame(Prediction_data)
+Prediction_dataframe
+```
+
+
+```{r, warning = FALSE}
+plot_first <- nonet_plot(Prediction_dataframe$pred_nonet, Prediction_dataframe$pred_clust_first, Prediction_dataframe, plot_type = "hist")
+```
+
+```{r}
+plot_first
+```
+
+
+```{r, warning = FALSE}
+plot_second <- nonet_plot(Prediction_dataframe$pred_clust_first, Prediction_dataframe$pred_nonet, Prediction_dataframe, plot_type = "hist")
+plot_second
+```
+```{r, warning = FALSE}
+plot_third <- nonet_plot(Prediction_dataframe$pred_clust_second, Prediction_dataframe$pred_nonet, Prediction_dataframe, plot_type = "hist")
+plot_third
+```
+
+
+
+
+```{r}
+#confusionMatrix(prediction_nonet_class, trainSet[,outcomeName])
 ```
 ```{r}
-confusionMatrix(predict_cluster_first_class,trainSet[,outcomeName])
+#confusionMatrix(predict_cluster_first_class,trainSet[,outcomeName])
 
 ```
 
 ```{r}
-confusionMatrix(predict_cluster_Second_class,trainSet[,outcomeName])
+#confusionMatrix(predict_cluster_Second_class,trainSet[,outcomeName])
 ```
 
