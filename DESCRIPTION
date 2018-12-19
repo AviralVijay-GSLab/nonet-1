@@ -15,7 +15,6 @@ Imports:
     rlist (>= 0.4.6.1),
     glmnet,
     tidyverse,
-    ClusterR,
     e1071,
     purrr,
     pROC (>= 1.13.0),
@@ -24,7 +23,8 @@ RoxygenNote: 6.1.1
 Suggests:
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    ClusterR
 URL: http://docs.healthcare.ai
 BugReports: https://github.com/HealthCatalyst/healthcareai-r/issues
 VignetteBuilder: knitr

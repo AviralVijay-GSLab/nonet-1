@@ -2,7 +2,6 @@
 
 export(nonet_ensemble)
 export(nonet_plot)
-import(ClusterR)
 import(caret)
 import(ggplot2)
 import(glmnet)

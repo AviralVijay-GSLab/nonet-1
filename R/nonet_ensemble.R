@@ -7,7 +7,6 @@
 #' @export
 #' @import caret
 #' @import rlist
-#' @import ClusterR
 #' @import tidyverse
 #' @import tidyverse
 #' @import stats

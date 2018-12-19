@@ -13,7 +13,6 @@
 #' @import caret
 #' @import ggplot2
 #' @import rlist
-#' @import ClusterR
 #' @import tidyverse
 #'
 #' @examples
