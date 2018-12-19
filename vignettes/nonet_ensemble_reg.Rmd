@@ -1,7 +1,5 @@
 ---
 title: "nonet_ensemble regression with nonet_plot"
-author: "Aviral Vijay"
-date: "`r Sys.Date()`"
 output: html_vignette
 vignette: >
   %\VignetteIndexEntry{nonet ensemble regression with nonet plot}
