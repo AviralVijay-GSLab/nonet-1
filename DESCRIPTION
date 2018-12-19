@@ -1,6 +1,6 @@
 Package: nonet
 Title: Weighted Average Ensemble without training labels
-Version: 0.0.0.9000
+Version: 0.1
 Authors@R: c(person("Aviral", "Vijay", role = c("aut", "cre"), email = "aviral.vijay@gslab.com"), person("Sameer", "Mahajan", role = "aut", email = "sameer.mahajan@gslab.com"))
 Description: It provides ensemble capabilities to supervised and unsupervised learning models predictions without using training labels. It decides the relative weights of the different models predictions by using best models predictions as response variable and rest of the mo. User can decide the best model, therefore, It provides freedom to user for ensembling models based on their design solutions.
 Depends: R (<= 3.5.1)
