@@ -6,7 +6,7 @@ nonet is unified solution for weighted average ensemble in supervised and unsupe
 - This  approach can be used to impute the missing values in the real-time scenarios in supervised and unsupervised environment because nonet does not require training labels to compute the weights for ensemble. 
 
 ## Getting Started:
-one of the best way to start with this project is, have a look at [vignettes](https://github.com/AviralVijay-GSLab/nonet/vignettes).
+one of the best way to start with this project is, have a look at [vignettes](https://github.com/AviralVijay-GSLab/nonet/tree/master/vignettes).
 Vignettes provides clear idea about how nonet can contribute to ensemble different models all together.
 
 
