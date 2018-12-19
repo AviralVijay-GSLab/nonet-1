@@ -1,6 +1,6 @@
 # nonet
 
-Nonet is unified solution for ensembling in supervised and unsupervised learning environment. It is a novel approach to provide weighted average ensembled predictions without using labels from outcome or response variable for weight computation. In a nutshell, nonet can be used in two scenarios: 
+nonet is unified solution for weighted average ensemble in supervised and unsupervised learning environment. It is a novel approach to provide weighted average ensembled predictions without using labels from outcome or response variable for weight computation. In a nutshell, nonet can be used in two scenarios: 
 
 - This approach can be used in the unsupervised environment where outcome labels not available.
 - This  approach can be used to impute the missing values in the real-time scenarios in supervised and unsupervised environment because nonet does not require training labels to compute the weights for ensemble. 
@@ -11,7 +11,7 @@ In order to run it, you need to have [R](https://mran.microsoft.com/download) an
 Once you have everything installed, open the project on R studio and click `Run App`, or call runApp() from the console. You might need to manually install the required packages
 
 #### Requirements
-- R (<= 3.5.1)
+- R (<= 3.5.1 && above 3.4.0)
 
 #### Used packages: 
 - caret (>= 6.0.78),
