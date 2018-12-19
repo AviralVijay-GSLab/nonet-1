@@ -20,7 +20,7 @@ This package can be downloaded from github using devtools:
 nonet uses below mentioned R version & packages:-
 
 #### Requirements
-- R (<= 3.5.1)
+- R (>= 3.5.1)
 
 #### Used packages: 
 - caret (>= 6.0.78),
@@ -30,7 +30,6 @@ nonet uses below mentioned R version & packages:-
 - rlist (>= 0.4.6.1),
 - glmnet,
 - tidyverse,
-- ClusterR,
 - e1071,
 - purrr,
 - pROC (>= 1.13.0),
