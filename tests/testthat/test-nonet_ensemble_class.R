@@ -20,26 +20,26 @@ outcomeName <- 'class'
 predictors <- c("variance", "skewness", "curtosis", "entropy")
 
 banknote_rf <- train(trainSet[,predictors],trainSet[,outcomeName],method='rf')
-banknote_nnet <- train(trainSet[,predictors],trainSet[,outcomeName],method='nnet')
+banknote_ada <- train(trainSet[,predictors],trainSet[,outcomeName],method='ada')
 
 
 predictions_rf <- predict.train(object=banknote_rf,testSet[,predictors],type="prob")
-predictions_nnet <- predict.train(object=banknote_nnet,testSet[,predictors],type="prob")
+predictions_ada <- predict.train(object=banknote_ada,testSet[,predictors],type="prob")
 
 predictions_rf_raw <- predict.train(object=banknote_rf,testSet[,predictors],type="raw")
-predictions_nnet_raw <- predict.train(object=banknote_nnet,testSet[,predictors],type="raw")
+predictions_ada_raw <- predict.train(object=banknote_ada,testSet[,predictors],type="raw")
 
-Stack_object <- list(predictions_rf$Yes, predictions_nnet$Yes)
+Stack_object <- list(predictions_rf$Yes, predictions_ada$Yes)
 
-names(Stack_object) <- c("model_rf", "model_nnet")
+names(Stack_object) <- c("model_rf", "model_ada")
 
-prediction_nonet_raw <- nonet_ensemble(Stack_object, "model_nnet")
+prediction_nonet_raw <- nonet_ensemble(Stack_object, "model_ada")
 
 prediction_nonet <- as.factor(ifelse(prediction_nonet_raw >= "0.5", "Yes", "No"))
 
 confusionMatrix(prediction_nonet, testSet[,outcomeName])
 confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
-confusionMatrix(predictions_nnet_raw,testSet[,outcomeName])
+confusionMatrix(predictions_ada_raw,testSet[,outcomeName])
 
 # Test
 test_that("predictions_rf$Yes return numeric vector", {
@@ -47,8 +47,8 @@ test_that("predictions_rf$Yes return numeric vector", {
 })
 
 
-test_that("predictions_nnet$Yes return numeric vector", {
-  expect_is(predictions_nnet$Yes, "numeric")
+test_that("predictions_ada$Yes return numeric vector", {
+  expect_is(predictions_ada$Yes, "numeric")
 })
 
 

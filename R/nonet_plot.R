@@ -48,34 +48,34 @@
 #' 
 #' # Model Training
 #' banknote_rf <- train(trainSet[,predictors],trainSet[,outcomeName],method='rf')
-#' banknote_nnet <- train(trainSet[,predictors],trainSet[,outcomeName],method='nnet')
+#' banknote_ada <- train(trainSet[,predictors],trainSet[,outcomeName],method='ada')
 #' 
 #' 
 #' predictions_rf <- predict.train(object=banknote_rf,testSet[,predictors],type="prob")
-#' predictions_nnet <- predict.train(object=banknote_nnet,testSet[,predictors],type="prob")
+#' predictions_ada <- predict.train(object=banknote_ada,testSet[,predictors],type="prob")
 #' 
 #' predictions_rf_raw <- predict.train(object=banknote_rf,testSet[,predictors],type="raw")
-#' predictions_nnet_raw <- predict.train(object=banknote_nnet,testSet[,predictors],type="raw")
+#' predictions_ada_raw <- predict.train(object=banknote_ada,testSet[,predictors],type="raw")
 #' 
-#' Stack_object <- list(predictions_rf$Yes, predictions_nnet$Yes)
+#' Stack_object <- list(predictions_rf$Yes, predictions_ada$Yes)
 #' 
-#' names(Stack_object) <- c("model_rf", "model_nnet")
+#' names(Stack_object) <- c("model_rf", "model_ada")
 #' 
 #' # Prediction using nonet_ensemble function
-#' prediction_nonet <- nonet_ensemble(Stack_object, "model_nnet")
+#' prediction_nonet <- nonet_ensemble(Stack_object, "model_ada")
 #' # Converting probabilities into classes
 #' prediction_nonet <- as.factor(ifelse(prediction_nonet >= "0.5", "Yes", "No"))
 #' 
 #' # Results
 #' nonet_eval <- confusionMatrix(prediction_nonet, testSet[,outcomeName])
 #' nonet_eval_rf <- confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
-#' nonet_eval_nnet <- confusionMatrix(predictions_nnet_raw,testSet[,outcomeName])
+#' nonet_eval_ada <- confusionMatrix(predictions_ada_raw,testSet[,outcomeName])
 #' eval_df <- data.frame(nonet_eval$table)
 #' eval_rf_df <- data.frame(nonet_eval_rf$table)
-#' eval_nnet_df <- data.frame(nonet_eval_nnet$table)
+#' eval_ada_df <- data.frame(nonet_eval_ada$table)
 #' nonet_plot(eval_df$Prediction, eval_df$Reference, eval_df, plot_type = "point")
 #' nonet_plot(eval_rf_df$Prediction, eval_rf_df$Reference, eval_rf_df, plot_type = "boxplot")
-#' nonet_plot(eval_nnet_df$Prediction, eval_nnet_df$Reference, eval_nnet_df, plot_type = "density")
+#' nonet_plot(eval_ada_df$Prediction, eval_ada_df$Reference, eval_ada_df, plot_type = "density")
 
 nonet_plot <- function (x, y, dataframe, plot_type = NULL , nonet_size = 20, nonet_alpha = .3, nonet_bins = 25) {
   
