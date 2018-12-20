@@ -2,7 +2,7 @@ context("Checking nonet_ensemble Clustering")
 
 # Setup
 library(ClusterR)
-Bank_Note <- data.frame(banknote_authentication)
+Bank_Note <- data.frame(banknote_authentication[500:800, ])
 dataframe <- Bank_Note
 dataframe$class <- as.factor(ifelse(dataframe$class >= 1, 'Yes', 'No'))
 dataframe <- data.frame(dataframe)
@@ -14,7 +14,7 @@ testSet <- dataframe[-index,]
 #Feature selection using rfe in caret
 control <- rfeControl(functions = rfFuncs,
   method = "repeatedcv",
-  repeats = 3,
+  repeats = 2,
   verbose = FALSE)
 
 outcomeName <- 'class'
@@ -37,7 +37,7 @@ testSet <- dataframe[-index,]
 #Feature selection using rfe in caret
 control <- rfeControl(functions = rfFuncs,
   method = "repeatedcv",
-  repeats = 3,
+  repeats = 2,
   verbose = FALSE)
 
 outcomeName <- 'class'

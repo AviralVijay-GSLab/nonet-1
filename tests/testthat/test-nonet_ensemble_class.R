@@ -1,54 +1,62 @@
-context("Checking nonet_ensemble Classification")
+context("Check nonet_ensemble Classification")
 
 # Setup
-Bank_Note <- data.frame(banknote_authentication)
-dataframe <- Bank_Note
+dataframe <- data.frame(banknote_authentication[500:800, ])
 dataframe$class <- as.factor(ifelse(dataframe$class >= 1, 'Yes', 'No'))
-dataframe <- data.frame(dataframe)
-
+# First Model
 index <- createDataPartition(dataframe$class, p=0.75, list=FALSE)
 trainSet <- dataframe[ index,]
 testSet <- dataframe[-index,]
 
-#Feature selection using rfe in caret
+# Feature selection 
 control <- rfeControl(functions = rfFuncs,
   method = "repeatedcv",
-  repeats = 3,
+  repeats = 2,
   verbose = FALSE)
 
 outcomeName <- 'class'
-predictors <- c("variance", "skewness", "curtosis", "entropy")
+predictors <- c("variance", "skewness")
 
 banknote_rf <- train(trainSet[,predictors],trainSet[,outcomeName],method='rf')
-banknote_ada <- train(trainSet[,predictors],trainSet[,outcomeName],method='ada')
+preds_rf_first <- predict.train(object=banknote_rf,testSet[,predictors],type="prob")
+preds_rf_first_raw <- predict.train(object=banknote_rf,testSet[,predictors],type="raw")
 
+# Second Model
+# Spliting into train and test
+index <- createDataPartition(dataframe$class, p=0.75, list=FALSE)
+trainSet <- dataframe[ index,]
+testSet <- dataframe[-index,]
 
-predictions_rf <- predict.train(object=banknote_rf,testSet[,predictors],type="prob")
-predictions_ada <- predict.train(object=banknote_ada,testSet[,predictors],type="prob")
+# Feature selection 
+control <- rfeControl(functions = rfFuncs,
+  method = "repeatedcv",
+  repeats = 2,
+  verbose = FALSE)
 
-predictions_rf_raw <- predict.train(object=banknote_rf,testSet[,predictors],type="raw")
-predictions_ada_raw <- predict.train(object=banknote_ada,testSet[,predictors],type="raw")
+outcomeName <- 'class'
+predictors <- c("curtosis", "entropy")
 
-Stack_object <- list(predictions_rf$Yes, predictions_ada$Yes)
+banknote_rf <- train(trainSet[,predictors],trainSet[,outcomeName],method='rf')
+preds_rf_second <- predict.train(object=banknote_rf,testSet[,predictors],type="prob")
+preds_rf_second_raw <- predict.train(object=banknote_rf,testSet[,predictors],type="raw")
 
-names(Stack_object) <- c("model_rf", "model_ada")
+Stack_object <- list(preds_rf_first$Yes, preds_rf_second$Yes)
+names(Stack_object) <- c("model_rf_first", "model_rf_second")
 
-prediction_nonet_raw <- nonet_ensemble(Stack_object, "model_ada")
-
+# Prediction using nonet_ensemble function
+prediction_nonet_raw <- nonet_ensemble(Stack_object, "model_rf_second")
+# Converting probabilities into classes
 prediction_nonet <- as.factor(ifelse(prediction_nonet_raw >= "0.5", "Yes", "No"))
 
-confusionMatrix(prediction_nonet, testSet[,outcomeName])
-confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
-confusionMatrix(predictions_ada_raw,testSet[,outcomeName])
 
 # Test
-test_that("predictions_rf$Yes return numeric vector", {
-  expect_is(predictions_rf$Yes, "numeric")
+test_that("preds_rf_first$Yes return numeric vector", {
+  expect_is(preds_rf_first$Yes, "numeric")
 })
 
 
-test_that("predictions_ada$Yes return numeric vector", {
-  expect_is(predictions_ada$Yes, "numeric")
+test_that("preds_rf_second$Yes return numeric vector", {
+  expect_is(preds_rf_second$Yes, "numeric")
 })
 
 

@@ -2,7 +2,7 @@ context("Checking nonet_ensemble Regression")
 
 
 # Setup
-dataframe <- data.frame(banknote_authentication)
+dataframe <- data.frame(banknote_authentication[500:800, ])
 
 #First Linear Regression Model
 index <- createDataPartition(dataframe$class, p=0.75, list=FALSE)
@@ -12,7 +12,7 @@ testSet <- dataframe[-index,]
 #Feature selection using rfe in caret
 control <- rfeControl(functions = rfFuncs,
   method = "repeatedcv",
-  repeats = 3,
+  repeats = 2,
   verbose = FALSE)
 
 outcomeName <- 'entropy'
@@ -30,7 +30,7 @@ testSet <- dataframe[-index,]
 #Feature selection using rfe in caret
 control <- rfeControl(functions = rfFuncs,
   method = "repeatedcv",
-  repeats = 3,
+  repeats = 2,
   verbose = FALSE)
 
 outcomeName <- 'entropy'
@@ -46,9 +46,6 @@ Stack_object <- list(predictions_lm_first, predictions_lm_second)
 names(Stack_object) <- c("lm_first", "lm_second")
 
 prediction_nonet <- nonet_ensemble(Stack_object, "lm_first")
-
-Actual_Pred <- data.frame(cbind(actuals = testSet[,outcomeName], predictions = prediction_nonet))  
-accuracy <- cor(Actual_Pred)
 
 # Test
 

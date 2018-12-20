@@ -8,9 +8,7 @@
 #' @import caret
 #' @import rlist
 #' @import tidyverse
-#' @import tidyverse
 #' @import stats
-#' @import ggplot2
 #' @import glmnet
 #' 
 #' @examples
@@ -18,53 +16,55 @@
 #' # Setup
 #' library(caret)
 #' library(nonet)
-#' library(ggplot2)
 #' library(rlist)
 #' 
 #' # Load Data
-#' dataframe <- data.frame(banknote_authentication)
+#' dataframe <- data.frame(banknote_authentication[600:900, ])
+#' dataframe$class <- as.factor(ifelse(dataframe$class >= 1, 'Yes', 'No'))
 #' 
+#' # First Model
 #' # Spliting into train and test
 #' index <- createDataPartition(dataframe$class, p=0.75, list=FALSE)
 #' trainSet <- dataframe[ index,]
 #' testSet <- dataframe[-index,]
 #' 
-#' trainSet$class <- as.factor(ifelse(trainSet$class >= 1, 'Yes', 'No'))
-#' testSet$class <- as.factor(ifelse(testSet$class >= 1, 'Yes', 'No'))
+#' #Feature selection 
+#' control <- rfeControl(functions = rfFuncs,
+#'   method = "repeatedcv",
+#'   repeats = 1,
+#'   verbose = FALSE)
 #' 
-#' trainSet <- data.frame(trainSet)
-#' testSet <- data.frame(testSet)
+#' outcomeName <- 'class'
+#' predictors <- c("variance", "skewness")
+#' 
+#' banknote_rf <- train(trainSet[,predictors],trainSet[,outcomeName],method='rf')
+#' preds_rf_first <- predict.train(object=banknote_rf,testSet[,predictors],type="prob")
+#' preds_rf_first_raw <- predict.train(object=banknote_rf,testSet[,predictors],type="raw")
+#' 
+#' # Second Model
+#' # Spliting into train and test
+#' index <- createDataPartition(dataframe$class, p=0.75, list=FALSE)
+#' trainSet <- dataframe[ index,]
+#' testSet <- dataframe[-index,]
 #' 
 #' #Feature selection 
 #' control <- rfeControl(functions = rfFuncs,
 #'   method = "repeatedcv",
-#'   repeats = 3,
+#'   repeats = 2,
 #'   verbose = FALSE)
 #' 
 #' outcomeName <- 'class'
-#' predictors <- c("variance", "skewness", "curtosis", "entropy")
+#' predictors <- c("curtosis", "entropy")
 #' 
 #' banknote_rf <- train(trainSet[,predictors],trainSet[,outcomeName],method='rf')
-#' banknote_ada <- train(trainSet[,predictors],trainSet[,outcomeName],method='ada')
+#' preds_rf_second <- predict.train(object=banknote_rf,testSet[,predictors],type="prob")
+#' preds_rf_second_raw <- predict.train(object=banknote_rf,testSet[,predictors],type="raw")
 #' 
-#' predictions_rf <- predict.train(object=banknote_rf,testSet[,predictors],type="prob")
-#' predictions_ada <- predict.train(object=banknote_ada,testSet[,predictors],type="prob")
-#' 
-#' predictions_rf_raw <- predict.train(object=banknote_rf,testSet[,predictors],type="raw")
-#' predictions_ada_raw <- predict.train(object=banknote_ada,testSet[,predictors],type="raw")
-#' 
-#' Stack_object <- list(predictions_rf$Yes, predictions_ada$Yes)
-#' names(Stack_object) <- c("model_rf", "model_ada")
+#' Stack_object <- list(preds_rf_first$Yes, preds_rf_second$Yes)
+#' names(Stack_object) <- c("model_rf_first", "model_rf_second")
 #' 
 #' # Prediction using nonet_ensemble function
-#' prediction_nonet <- nonet_ensemble(Stack_object, "model_ada")
-#' # Converting probabilities into classes
-#' prediction_nonet <- as.factor(ifelse(prediction_nonet >= "0.5", "Yes", "No"))
-#' 
-#' # Results
-#' nonet_eval <- confusionMatrix(prediction_nonet, testSet[,outcomeName])
-#' confusionMatrix(predictions_rf_raw,testSet[,outcomeName])
-#' confusionMatrix(predictions_ada_raw,testSet[,outcomeName])
+#' prediction_nonet <- nonet_ensemble(Stack_object, "model_rf_second")
 #'
 
 nonet_ensemble <- function(object, best_modelname) {
