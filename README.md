@@ -9,7 +9,7 @@ nonet is a unified solution for weighted average ensemble in supervised and unsu
 one of the best way to start with this project is, have a look at [vignettes](https://github.com/AviralVijay-GSLab/nonet/tree/master/vignettes).
 Vignettes provides clear idea about how nonet can contribute to ensemble different models all together.
 
-nonet also available on [Github Page](https://aviralvijay-gslab.github.io/nonet/)
+nonet also available on [Github Page](https://open.gslab.com/nonet/)
 
 ### Installtion
 This package can be downloaded from github using devtools:
